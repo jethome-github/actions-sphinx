@@ -1,0 +1,30 @@
+name: Prepare Python venv
+description: Prepare Python virtualenv in .venv. Works only on amd64
+
+inputs:
+  python-version:
+    description: 'Python version to use'
+    required: true
+    default: '3.10'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python ${{ inputs.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Set up virtualenv
+      uses: syphar/restore-virtualenv@v1
+      id: cache-virtualenv
+      with:
+        requirement_files: requirements.txt
+
+    - name: Check cache
+      uses: syphar/restore-pip-download-cache@v1
+      if: steps.cache-virtualenv.outputs.cache-hit != 'true'
+
+    - name: Install python modules
+      run: pip install -r requirements.txt
+      if: steps.cache-virtualenv.outputs.cache-hit != 'true'
