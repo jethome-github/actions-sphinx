@@ -1,0 +1,46 @@
+name: Do CI
+description: Do build check
+
+inputs:
+  target:
+    description: Target to build
+    required: true
+    default: "html"
+  env:
+    description: Environment variables
+    required: false
+    default: ""
+  upload_artifact:
+    description: Upload artifact
+    required: false
+    default: false
+  stop-on-warning:
+    description: Stop with error on warnings
+    required: true
+    default: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Clean build
+      shell: bash
+      run: rm -rf _build warning.txt
+
+    - name: 🚀 Build CI
+      shell: bash
+      run: |
+        make ${{ inputs.target }} ${{ inputs.env }}  2> >(tee warning.txt)
+        if [[ -s warning.txt ]]; then
+          echo ---------------------- Found warnings in build ----------------------
+          if [[ "${{ inputs.stop-on-warning }}" == "true" ]]; then
+            exit 100
+          fi
+        fi
+
+    - name: ℹ️ Upload artifacts
+      uses: actions/upload-artifact@v3
+      if: ${{ inputs.upload_artifact=='true' }}
+      with:
+        name: HTMLOutput
+        path: |
+          _build/html
