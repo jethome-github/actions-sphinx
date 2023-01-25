@@ -38,7 +38,7 @@ runs:
       if: ${{ inputs.deploy_mode == 'rsync' }}
       shell: bash
       run: |
-          rsync -avz --delete ${{ inputs.build_out }} ${{ inputs.deploy_host }}:${{ inputs.deploy_dir }}
+          rsync -avz --delete ${{ inputs.build_out }}/ ${{ inputs.deploy_host }}:${{ inputs.deploy_dir }}
 
     - name: Unsupported mode
       if: ${{ inputs.deploy_mode != 'rsync' }}
