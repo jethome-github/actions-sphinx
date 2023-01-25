@@ -1,0 +1,48 @@
+name: Do CD
+description: Do build check
+
+inputs:
+  build_out:
+    description: Builddir
+    required: true
+    default: "_build/html"
+  deploy_host: 
+    description: Host to deploy (user@host)
+    required: true
+  deploy_dir: 
+    description: Target dir to deploy
+  deploy_mode:
+    description: Deploy mode
+    required: true
+    default: "rsync"
+  ssh_key:
+    description: SSH key (for rsync deploy)
+    required: false
+  ssh_hostkey:
+    description: SSH hostkey (if deploy rsync)
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+
+    - name: Install SSH key for storage
+      uses: shimataro/ssh-key-action@v2
+      if: ${{ inputs.deploy_mode == 'rsync' }} && ${{ inputs.ssh_key != '' }}
+      with:
+        key: ${{ inputs.ssh_key }}
+        known_hosts: ${{ inputs.ssh_hostkey }}
+        if_key_exists: replace
+
+    - name: Deploy
+      if: ${{ inputs.deploy_mode == 'rsync' }}
+      shell: bash
+      run: |
+          rsync -avz --delete ${{ inputs.build_out }} ${{ inputs.deploy_host }}:${{ inputs.deploy_dir }}}
+
+    - name: Unsupported mode
+      if: ${{ inputs.deploy_mode != 'rsync' }}
+      shell: bash
+      run: |
+        echo "We only support rsync deploy_mode"
+        exit 100
