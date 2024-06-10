@@ -5,27 +5,17 @@ inputs:
   python-version:
     description: 'Python version to use'
     required: true
-    default: '3.10'
+    default: '3.12'
 
 runs:
   using: "composite"
   steps:
     - name: Set up Python ${{ inputs.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ inputs.python-version }}
-
-    - name: Set up virtualenv
-      uses: syphar/restore-virtualenv@v1
-      id: cache-virtualenv
-      with:
-        requirement_files: requirements.txt
-
-    - name: Check cache
-      if: steps.cache-virtualenv.outputs.cache-hit != 'true'
-      uses: syphar/restore-pip-download-cache@v1
+        cache: 'pipenv'
 
     - name: Install python modules
       shell: bash
       run: pip install -r requirements.txt
-      if: steps.cache-virtualenv.outputs.cache-hit != 'true'
