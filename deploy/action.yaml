@@ -6,10 +6,10 @@ inputs:
     description: Builddir
     required: true
     default: "_build/html"
-  deploy_host: 
+  deploy_host:
     description: Host to deploy (user@host)
     required: true
-  deploy_dir: 
+  deploy_dir:
     description: Target dir to deploy
   deploy_mode:
     description: Deploy mode
