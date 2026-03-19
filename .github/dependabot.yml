@@ -1,16 +1,10 @@
 version: 2
 updates:
   - package-ecosystem: "github-actions"
-    directory: "/ci"
+    directories:
+      - "/"
+      - "/ci"
+      - "/deploy"
+      - "/prepare-env"
     schedule:
-      interval: "daily"
-
-  - package-ecosystem: "github-actions"
-    directory: "/deploy"
-    schedule:
-      interval: "daily"
-
-  - package-ecosystem: "github-actions"
-    directory: "/prepare-env"
-    schedule:
-      interval: "daily"
+      interval: "weekly"
