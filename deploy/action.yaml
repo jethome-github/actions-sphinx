@@ -1,5 +1,5 @@
 name: Do CD
-description: Do build check
+description: Deploy built site
 
 inputs:
   build_out:
@@ -28,7 +28,7 @@ runs:
 
     - name: Install SSH key for storage
       uses: shimataro/ssh-key-action@v2
-      if: ${{ inputs.deploy_mode == 'rsync' }} && ${{ inputs.ssh_key != '' }}
+      if: ${{ inputs.deploy_mode == 'rsync' && inputs.ssh_key != '' }}
       with:
         key: ${{ inputs.ssh_key }}
         known_hosts: ${{ inputs.ssh_hostkey }}
@@ -37,8 +37,12 @@ runs:
     - name: Deploy
       if: ${{ inputs.deploy_mode == 'rsync' }}
       shell: bash
+      env:
+        BUILD_OUT: ${{ inputs.build_out }}
+        DEPLOY_HOST: ${{ inputs.deploy_host }}
+        DEPLOY_DIR: ${{ inputs.deploy_dir }}
       run: |
-          rsync -avz --delete ${{ inputs.build_out }}/ ${{ inputs.deploy_host }}:${{ inputs.deploy_dir }}
+          rsync -avz --delete "$BUILD_OUT"/ "$DEPLOY_HOST":"$DEPLOY_DIR"
 
     - name: Unsupported mode
       if: ${{ inputs.deploy_mode != 'rsync' }}

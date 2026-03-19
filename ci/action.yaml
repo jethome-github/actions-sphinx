@@ -28,17 +28,21 @@ runs:
 
     - name: 🚀 Build CI
       shell: bash
+      env:
+        MAKE_TARGET: ${{ inputs.target }}
+        MAKE_ARGS: ${{ inputs.env }}
+        STOP_ON_WARNING: ${{ inputs.stop-on-warning }}
       run: |
-        make ${{ inputs.target }} ${{ inputs.env }}  2> >(tee warning.txt)
+        make "$MAKE_TARGET" $MAKE_ARGS 2> >(tee warning.txt)
         if [[ -s warning.txt ]]; then
           echo ---------------------- Found warnings in build ----------------------
-          if [[ "${{ inputs.stop-on-warning }}" == "true" ]]; then
+          if [[ "$STOP_ON_WARNING" == "true" ]]; then
             exit 100
           fi
         fi
 
     - name: ℹ️ Upload artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       if: ${{ inputs.upload_artifact=='true' }}
       with:
         name: HTMLOutput
