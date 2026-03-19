@@ -1,5 +1,5 @@
 name: Prepare Python venv
-description: Prepare Python virtualenv in .venv. Works only on amd64
+description: Set up Python and install pip dependencies
 
 inputs:
   python-version:
