@@ -8,3 +8,11 @@ updates:
       - "/prepare-env"
     schedule:
       interval: "weekly"
+    groups:
+      actions-major:
+        update-types:
+          - "major"
+      actions-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
